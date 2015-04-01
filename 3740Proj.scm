@@ -57,7 +57,13 @@
   
 ;9)SWAP
 ;  -swap the top two elements on the top of the stack.
-
+(define (SWAP)
+  (set! s1 (car stack)) ;s1 is the top of the stack
+  (cdr stack) ;Take it off of the stack
+  (set! s2(car stack)) ;s2 is the second element from the stack
+  (cdr stack) ;Take the second element off the stack
+  (push s1) ;Push s1 back onto the stack
+  (push s2) ;Push s2 back onto the stack
 ;10) REV
 ;  -reverse all the elements in the stack
 ;  -(the top becomes the bottom while the bottom becomes the top)
