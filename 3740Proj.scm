@@ -67,13 +67,28 @@
 ;10) REV
 ;  -reverse all the elements in the stack
 ;  -(the top becomes the bottom while the bottom becomes the top)
+(define (REV s)
+  (if (null? s) ;Base case for recursion, check if the stack is empty
+      (set! s tempstack) ;If it is empty, set the stack to the temporary stack
+      ;ELSE
+      (begin
+        (set! tempstack (cons (car s) tempstack))
+        (REV (cdr s)))))
+
 ;11) STACK 
 ;  -print out the current content of the stack, from top to the bottom.
+(define (STACK)
+  (display stack))
+
 ;12) CLEAR 
 ;  -clears the contents of the stack 
+(define (CLEAR s)
+  (if (null? s) ;if the stack is empty
+      0 ;do nothing
+      (CLEAR (cdr s))))
+;;This needs to be improved on, also can't be run unless we comment out the STACK function
+      
 
 
-;;Random vars for testing:
-(define p 1)
-(define list '(1 2 3))
+
 
