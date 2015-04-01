@@ -1,3 +1,12 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;CPSC 3470 
+;Final Project
+;Implement an interpreter for a stack based language called U of L which
+;used reverse polish notation.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Global variables:
 (define stack '()) ;The stack, represented as a list
 (define temp 0) ;The temporary variable for POP operation
@@ -6,6 +15,8 @@
 (define t 0) 
 (define s1 0)
 (define s2 0)
+(define var1)
+(define var2)
 (define tempstack '())
 ;Functions:
 ;1) Push operation
@@ -23,6 +34,10 @@
 ;  -ie:UofL> define a 10 //Defines a variable a to be 10
 (define (DEF a n) ;;This function needs to be chaged/fixed
   (set! a n))
+
+;************************************************************************************************
+;Basic stack operations
+
 ;5)DROP operation
 ;  -Pops the top element off the stack and throws it away
 (define (DROP x)
@@ -86,9 +101,53 @@
       (CLEAR (cdr s))))
 ;;This needs to be improved on, also can't be run unless we comment out the STACK function
       
+;************************************************************************************************
+;Conditional statements
+
+;condIF
+;   This is the basic if condition
+
+;condTHEN
+;   This is the basic then condition
+
+;condELSe
+;   This is the basic else condition
+
+;************************************************************************************************
+;LOOPS
+
+;LOOP
+;   This function allows us to loop.
+;   It is boolean controlled
+;   It starts with a conditional followed by a loop body
+
+;************************************************************************************************
+;FUNCTION DEFINITIONS
+
+;FUNC$ 
+;  marks the start of a function definition that uses static scoping
+
+;CNUF
+;  marks the end of the definition
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;;Random vars for testing:
 (define p 1)
 (define list '(1 2 3))
+
+
+
 
 
