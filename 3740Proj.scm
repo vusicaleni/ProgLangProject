@@ -210,7 +210,20 @@
 
 ;condIF
 ;   This is the basic if condition
-
+; something like this maybe ?
+; ( define (condIf x) // ex. given 0 
+	;(begin 
+		;(push x ) pushs 0 on to stack 
+		;(pop x ) // next we need to pop the top 2 elements 
+		;(set! temp s1) // since temp is rewritten after each pop set temp to s1 
+		;(pop stack) // pop the second element 
+		;(set! temp s2) // set temp so s2 
+		;(LessThan s1 s2) // pass them to the lessthan defintion 
+		;(push temp) // we need lessThan to save a temp variable
+		;(if 1 = temp
+			;(display " top of stack is greater ") // should we be callign a func here?
+			;(display " stack is smaller " ))))// 
+			
 ;(define (condIF condition)
 ;  (begin
 ;  (if(operator x y))))
