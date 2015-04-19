@@ -5,30 +5,131 @@
 ;used reverse polish notation.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;Declarations of variables for the concatenator function and
+;Declarations for the command prompt.
+(define promptCommand '())
+(define inputList '())
 ;Global variables:
 (define stack '()) ;The stack, represented as a list
 (define temp 0) ;The temporary variable for POP operation
-
+(define nums '()) ;A list of numbers that are pushed onto the stack using the PUSH operator
+(define lastList '()) ;A list that keeps track of the last operation done
 ;Temp vars
 (define t 0) 
-(define s1 0)
-(define s2 0)
-(define var1)
-(define var2)
+;(define s1)
+;(define s2)
+(define var1 0)
+(define var2 0)
 (define tempstack '())
+
+;************************************************************************************************
+;Read User Input Function
+(define (read-keyboard-as-list)
+  (let ((char (read-char)))
+    (if (char=? char #\newline)
+        '()
+        (let loop ((char char))
+          (if (char=? char #\newline)
+              '()
+              (cons char (loop (read-char)))
+              )
+          )
+        )
+    )
+  )
+
+;************************************************************************************************
+;The Program Loop
+;General Idea:
+;It takes read-input as a parameter and calls the parser, this happens inifnitely.  
+(define (infiniteLoop) 
+  (display "UOFL>")
+  (parser (read-keyboard-as-list))
+  (infiniteLoop))
+
+;************************************************************************************************
+;The Parser
+;General Idea: 
+;Parser gets a list as an input, the list will be read until a space.  This list will be the command call for the language.
+;If there is no space, it keeps reading.  If there is, then it will return the FUNCTION which calls all of the other functions.
+;functionGenerator will direct to all other function calls
+(define parser (lambda (inputList)
+                    
+					;If everything in the input string has been eaten, then:
+					;1. Call the functionCaller with the promptCommand
+					;2. Set the promptCommand to null so that no more commands can be made.
+                 (if (<= (length inputList) 0)
+                     (begin
+                       (functionCaller promptCommand)
+                       (set! promptCommand '())
+                       )
+					;Else the input string is still being eaten
+                     (begin
+					;If the first inputList char ISN'T a space or zero then we begin
+					;1. append the latest inputList to the promptCommand
+					;2. recurse on the rest of the inputList
+					;3. and set the promptCommand to null
+                       (if (or (not(equal? (car (list inputList)) #\space)) 
+                               (eq? (length inputList) 0))
+			   (begin
+			     (set! promptCommand (append promptCommand (list(car inputList))))
+                             (parser (cdr  inputList))                           ;2
+                             (set! promptCommand '()))                            ;3 
+					;If the inputList char IS a space or zero then we begin
+					;1. Call the functionCaller
+					;2. Clear the promptCommand
+					;3. Recurse, but skip the space, so that the operands can be used.
+			   (begin 
+			     (functionCaller promptCommand)  ;1
+			     (set! promptCommand '())         ;2
+			     (parser (cdr inputList))        ;3
+			     )        
+			   )
+		       )
+		     )
+		 )
+  )
+
+(define (functionCaller promptCommand )
+  (set! promptCommand (list->string promptCommand))
+					; (if (= ((string-length promptCommand) 0))
+					;   0)
+					; (cond   ;Start of condition
+					;   ((integer? (promptCommand)) ;If the promptCommand  has an integer,
+					;   (set! nums(append num(list(string->number promptCommand)))) ;Add the integer in the command prompt to the list of nums
+					;   (if (< 2 (length lastList))  ;If the length of this list is less than 2
+					;	(set! lastList (cdr lastList)) ;set the list to the last operation in the list
+					;	(values))  ;Return the values of the last operation done
+  (cond					;   (PUSH (string->number promptCommand))
+  ((equal? promptCommand "DROP")(DROP))
+  ((equal? promptCommand "POP")(POP))
+  ((equal? promptCommand "DUP")(DUP))
+  ((equal? promptCommand "DEFINE")(DEF))
+  ((equal? promptCommand "SAVE")(SAVE))
+  ((equal? promptCommand "SWAP")(SWAP))
+  ((equal? promptCommand "STACK")(STACK))
+  ((equal? promptCommand "REV")(REV stack)) ;Call the reverse function on the stack
+  ((equal? promptCommand "CLEAR")(CLEAR stack)) ;Call the clear function on the stack
+  )
+  )
+
+
+
+
+
+;************************************************************************************************   
 ;Functions:
 ;1) Push operation
-;  -Pushes an element onto the queue
+;  -Pushes an element onto the stack
 ;  -Implied in the comand line 
 ;  (ie: UofL> 40 pushes 40 onto the stack
 ;  -If we add the element x to the front of the list this will simplify POP and DROP
-(define (PUSH x )
+(define (PUSH x)
   (set! stack (cons x stack))) ;Add element x to the (front) stack 
    
 ;3) . message operation
 ;  -Prints "<message>" to the screen
+
 ;4) define operation
 ;  -We can use this to define a variable
 ;  -ie:UofL> define a 10 //Defines a variable a to be 10
@@ -40,14 +141,18 @@
 
 ;5)DROP operation
 ;  -Pops the top element off the stack and throws it away
-(define (DROP x)
-  (if (null? stack);Check if the stack is empty
-      (display "The stack is empty") ;If the stack is empty, display
-      ;Else
-      (set! stack (cdr stack)))) ;Pop the front element off the stack
+(define (DROP)
+  (if (null? stack)
+      (display "The stack is empty")
+      (if (pair? stack)
+	  (set! stack (cdr stack)))))
+
+
+				;Pop the front element off the stack
+
 ;6)POP operation
 ;  -Pops the top element off the stack but saves to a temporary location
-(define (POP x)
+(define (POP)
   (if (null? stack);Check if the stack is empty
    (display "The stack is empty");If the stack is empty, display
    ;Else
@@ -100,18 +205,97 @@
       0 ;do nothing
       (CLEAR (cdr s))))
 ;;This needs to be improved on, also can't be run unless we comment out the STACK function
-      
+
 ;************************************************************************************************
-;Conditional statements
 
 ;condIF
 ;   This is the basic if condition
 
+;(define (condIF condition)
+;  (begin
+;  (if(operator x y))))
+
 ;condTHEN
 ;   This is the basic then condition
 
-;condELSe
+;condELSE
 ;   This is the basic else condition
+
+  
+;************************************************************************************************  
+  
+;Comparison Operators (i.e. < > <= =>, etc...)
+
+;Operator <
+(define (LESSTHAN s1 s2)
+  (if (< s1 s2)
+      (begin
+        DROP s1
+        DROP s2
+        1)
+      0)) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
+;Operator >
+(define (GREATERTHAN s1 s2)
+  (if (> s1 s2)
+      (begin
+        DROP s1
+        DROP s2
+        1)
+      0)) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
+;Operator =
+(define (EQUAL s1 s2)
+  (if (= s1 s2)
+      (begin
+        DROP s1
+        DROP s2
+        1)
+      0)) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
+;Operator !=
+(define (NOTEQUAL s1 s2)
+  (if (not (eq? s1 s2))
+      (begin
+        DROP s1
+        DROP s2
+        1)
+      0)) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
+;Operator <=
+(define (LESSTHANOREQUAL s1 s2)
+  (if (<= s1 s2)
+      (begin
+        DROP s1
+        DROP s2
+        1)
+      0)) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
+;Operator >=
+(define (GREATERTHANOREQUAL s1 s2)
+  (if (>= s1 s2)
+      (begin
+        DROP s1
+        DROP s2
+        1)
+      0)) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
+
+;Conditional statements
+;(define (IF)
+;  (cond (LESSTHAN s1 s2
+
+         
+         
+         ;(begin
+;(if (= condition GREATERTHANOREQUAL)
+;  (if (>= s1 s2)
+;      (begin
+;        DROP s1
+;        DROP s2
+;        1)
+;      0)))) ;DOES THIS RETURN 1 OR PUSH 1 BACK ONTO THE STACK
+
 
 ;************************************************************************************************
 ;LOOPS
@@ -120,6 +304,9 @@
 ;   This function allows us to loop.
 ;   It is boolean controlled
 ;   It starts with a conditional followed by a loop body
+
+;ead-keyboard-as-list) 
+
 
 ;************************************************************************************************
 ;FUNCTION DEFINITIONS
@@ -134,20 +321,14 @@
 
 
 
-
-
-
-
-
-
-
-
+(infiniteLoop)
 
 ;;Random vars for testing:
-(define p 1)
+(define p1 2)
+(PUSH p1)
 (define list '(1 2 3))
-
-
-
+(define p2 2)
+;(PUSH p1)
+;(PUSH p2)
 
 
